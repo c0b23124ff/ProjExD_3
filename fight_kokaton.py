@@ -154,13 +154,14 @@ class Score:
         引数 screen：画面Surface,score:現在のスコア
         """
         self.img = self.font.render(f"スコア:{score}", 0, (0,0,255))  # 文字列surfaceの生成
-        screen.blit(self.img,[200,700]) #座標100,850
+        screen.blit(self.img,[100,850]) #座標100,850
 
 
 class Explosion:
     def __init__(self,bomb:Bomb):
         """
-        あとでかく
+        引数bomb
+        爆発の座標
         """
         self.img = pg.transform.rotozoom(pg.image.load("fig/explosion.gif"), 0, 1.0)  # ビーム画像Surface
         self.rct: pg.Rect = self.img.get_rect()  # 画像Rect
@@ -172,7 +173,6 @@ class Explosion:
         self.life = 50
     def update(self, screen: pg.Surface):
         """
-        爆弾を速度ベクトルself.vx, self.vyに基づき移動させる
         引数 screen：画面Surface
         """
         screen.blit(self.lst[self.life%2], self.rct)
