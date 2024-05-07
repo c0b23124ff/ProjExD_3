@@ -165,7 +165,8 @@ def main():
     bird = Bird((900, 400))
     # bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
-    beam = None
+    beams = []
+    #beam = None
     score = 0 #スコア変数
     score_img = Score(score) #初期設定
     clock = pg.time.Clock()
@@ -175,7 +176,8 @@ def main():
             if event.type == pg.QUIT:
                 return
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
-                beam = Beam(bird)
+                #beam = Beam(bird)
+                beams.append(Beam(bird))
         screen.blit(bg_img, [0, 0])
         
         for bomb in bombs:
@@ -192,22 +194,26 @@ def main():
 
                 return
         # if not (beam is None or bomb is None):
-        for i, bomb in enumerate(bombs):
-            if beam is not None:
-                if beam.rct.colliderect(bomb.rct):  # ビームと爆弾が衝突したら
-                    beam = None
-                    bombs[i] = None
-                    score += 1
-                    bird.change_img(6, screen)
-                    pg.display.update()
+        for i, bomb in enumerate(bombs): #ビームとボム
+            for j, beam in enumerate(beams):
+                if beam is not None:
+                    if beam.rct.colliderect(bomb.rct):  # ビームと爆弾が衝突したら
+                        beams[j] = None
+                        bombs[i] = None
+                        score += 1
+                        bird.change_img(6, screen)
+                        pg.display.update()
         bombs = [bomb for bomb in bombs if bomb is not None]
         score_img.update(screen,score) #更新
         key_lst = pg.key.get_pressed()
         bird.update(key_lst, screen)
         for bomb in bombs:
             bomb.update(screen)
-        if beam is not None:
-            beam.update(screen)
+        for beam in beams:
+            if beam is not None:
+                beam.update(screen)
+        #if beam is not None:
+        #    beam.update(screen)
         pg.display.update()
         tmr += 1
         clock.tick(50)
