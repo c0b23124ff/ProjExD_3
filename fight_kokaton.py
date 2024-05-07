@@ -228,6 +228,7 @@ def main():
                         score += 1
                         bird.change_img(6, screen)
                         pg.display.update()
+                        break
         bombs = [bomb for bomb in bombs if bomb is not None]
         score_img.update(screen,score) #更新
         key_lst = pg.key.get_pressed()
