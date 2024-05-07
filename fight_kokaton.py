@@ -157,6 +157,29 @@ class Score:
         screen.blit(self.img,[200,700]) #座標100,850
 
 
+class Explosion:
+    def __init__(self,bomb:Bomb):
+        """
+        あとでかく
+        """
+        self.img = pg.transform.rotozoom(pg.image.load("fig/explosion.gif"), 0, 1.0)  # ビーム画像Surface
+        self.rct: pg.Rect = self.img.get_rect()  # 画像Rect
+        self.rct.left = bomb.rct.left  # ビームの左座標にこうかとんの右座標を設定する
+        self.rct.centery = bomb.rct.centery
+        self.lst=[]
+        self.lst.append(self.img)
+        self.lst.append(pg.transform.flip(self.img, True, True) )
+        self.life = 50
+    def update(self, screen: pg.Surface):
+        """
+        爆弾を速度ベクトルself.vx, self.vyに基づき移動させる
+        引数 screen：画面Surface
+        """
+        screen.blit(self.lst[self.life%2], self.rct)
+        self.life -= 1
+        
+
+
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -166,6 +189,7 @@ def main():
     # bomb = Bomb((255, 0, 0), 10)
     bombs = [Bomb((255, 0, 0), 10) for _ in range(NUM_OF_BOMBS)]
     beams = []
+    explosions = []
     #beam = None
     score = 0 #スコア変数
     score_img = Score(score) #初期設定
@@ -198,6 +222,7 @@ def main():
             for j, beam in enumerate(beams):
                 if beam is not None:
                     if beam.rct.colliderect(bomb.rct):  # ビームと爆弾が衝突したら
+                        explosions.append(Explosion(bombs[i]))
                         beams[j] = None
                         bombs[i] = None
                         score += 1
@@ -212,6 +237,11 @@ def main():
         for beam in beams:
             if beam is not None:
                 beam.update(screen)
+
+        for i,exp in enumerate(explosions):
+            exp.update(screen)
+            if exp.life <1:
+                del explosions[i]
         #if beam is not None:
         #    beam.update(screen)
         pg.display.update()
